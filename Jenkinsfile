@@ -1,10 +1,16 @@
-currentBuild.description = "Setting description from Jenkinsfile script"
+properties([
+    parameters([
+        string (name: 'branchName', defaultValue: 'master', description: 'Branch to get the tests from')
+    ])
+])
+
+currentBuild.description = "Branch: $params.branchName"
 
 node('master')
 {
     stage('Checkout')
     {
-        git 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
+        git branch: params.branchName, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
     }
 
     stage('Restore NuGet')
