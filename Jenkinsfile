@@ -24,19 +24,45 @@ node('master')
     {
         bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe" src/PhpTravels.UITests.sln'
     }
+}
 
-    try
-    {
-        stage('Run Tests')
+stage('Tests')
+{
+    parallel
+    (
+        FirstTest:
         {
-            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
+            node('master')
+            {
+                try
+                {
+                    bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==FirstTest"'
+                }
+                catch(error)
+                {
+                    isFailed = true
+                }
+            }
+        },
+        SecondTest:
+        {
+            node('Slave1')
+            {
+                try
+                {
+                    bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==SecondTest"'
+                }
+                catch(error)
+                {
+                    isFailed = true
+                }
+            }
         }
-    }
-    catch(error)
-    {
-        isFailed = true
-    }
+    )
+}
 
+node('master')
+{
     stage('Reporting')
     {
         if (!isFailed)
