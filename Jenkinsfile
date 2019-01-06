@@ -31,19 +31,24 @@ node
     }
 }
 
-stage('Tests')
+catchError
 {
-    parallel FirstTest: {
-        node('master')
-        {
-            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==FirstTest"'
-        }
-    }, SecondTest: {
-        node('Slave1')
-        {
-            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==SecondTest"'
+    isFailed = true
+    stage('Tests')
+    {
+        parallel FirstTest: {
+            node('master')
+            {
+                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==FirstTest"'
+            }
+        }, SecondTest: {
+            node('Slave1')
+            {
+                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==SecondTest"'
+            }
         }
     }
+    isFailed = false
 }
 
 node
