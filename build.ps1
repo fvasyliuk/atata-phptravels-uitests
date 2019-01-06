@@ -13,5 +13,5 @@ if (-Not (Test-Path $NugetExe -Verbose:$VerbosePreference))
     Invoke-WebRequest $NugetUrl -OutFile $NugetExe -Verbose:$VerbosePreference -ErrorAction Stop
 }
 
-Invoke-Expression ".\\nuget.exe restore $Solution"
-Invoke-Expression "msbuild.exe $Solution"
+& $NugetExe restore $Solution
+msbuild.exe $Solution
