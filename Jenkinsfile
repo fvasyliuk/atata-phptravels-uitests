@@ -28,35 +28,18 @@ node('master')
 
 stage('Tests')
 {
-    parallel
-        FirstTest:
+    parallel FirstTest: {
+        node('master')
         {
-            node('master')
-            {
-                try
-                {
-                    bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==FirstTest"'
-                }
-                catch(error)
-                {
-                    isFailed = true
-                }
-            }
-        },
-        SecondTest:
-        {
-            node('Slave1')
-            {
-                try
-                {
-                    bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==SecondTest"'
-                }
-                catch(error)
-                {
-                    isFailed = true
-                }
-            }
+            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==FirstTest"'
         }
+    }, SecondTest: {
+        node('Slave1')
+        {
+            
+            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==SecondTest"'
+        }
+    }
 }
 
 node('master')
