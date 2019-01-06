@@ -4,8 +4,8 @@ properties([
     ])
 ])
 
-def failedBuidStatus = "FAILURE"
-def succeededBuidStatus = "SUCCEESS"
+def failedBuildStatus = "FAILURE"
+def succeededBuildStatus = "SUCCEESS"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
@@ -28,17 +28,17 @@ node('master')
 
     catchError
     {
-        currentBuild.result = failedBuidStatus
+        currentBuild.result = failedBuildStatus
         stage('Run Tests')
         {
-            //bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
+            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
         }
-        currentBuild.result = succeededBuidStatus
+        currentBuild.result = succeededBuildStatus
     }
 
     stage('Reporting')
     {
-        if (currentBuild.result == succeededBuidStatus)
+        if (currentBuild.result == succeededBuildStatus)
         {
             slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
         }
@@ -50,7 +50,7 @@ node('master')
     
     stage('Copy Build Artifacts')
     {
-        if(currentBuild.result == succeededBuidStatus)
+        if(currentBuild.result == succeededBuildStatus)
         {
             bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
         }
