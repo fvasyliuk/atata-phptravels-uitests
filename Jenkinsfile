@@ -29,7 +29,6 @@ node('master')
 stage('Tests')
 {
     parallel
-    (
         FirstTest:
         {
             node('master')
@@ -58,7 +57,6 @@ stage('Tests')
                 }
             }
         }
-    )
 }
 
 node('master')
