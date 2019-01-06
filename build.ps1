@@ -14,5 +14,16 @@ if (-Not (Test-Path $NugetExe -Verbose:$VerbosePreference))
     Invoke-WebRequest $NugetUrl -OutFile $NugetExe -Verbose:$VerbosePreference -ErrorAction Stop
 }
 
+Write-Verbose "Restoring NuGet packages..."
 & $NugetExe restore $Solution
+if ($LastExitCode -ne 0) 
+{
+    Throw "An error occured while restoring NuGet packages."
+}
+
+Write-Verbose "Building a project..."
 & $MSBuildExe $Solution
+if ($LastExitCode -ne 0) 
+{
+    Throw "An error occured while restoring building a project."
+}
