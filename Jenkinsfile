@@ -4,13 +4,16 @@ properties([
     ])
 ])
 
-currentBuild.description = "Branch: $params.branchName"
+def failedBuidStatus = "FAILURE"
+def succeededBuidStatus = "SUCCEESS"
+def branch = params.branchName
+currentBuild.description = "Branch: $branch"
 
 node('master')
 {
     stage('Checkout')
     {
-        git branch: params.branchName, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
+        git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
     }
 
     stage('Restore NuGet')
@@ -23,19 +26,34 @@ node('master')
         bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe" src/PhpTravels.UITests.sln'
     }
 
-    stage('Run Tests')
+    catchError
     {
-        //bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
+        currentBuild.result = failedBuidStatus
+        stage('Run Tests')
+        {
+            //bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
+        }
+        currentBuild.result = succeededBuidStatus
     }
 
     stage('Reporting')
     {
-        //slackSend message: 'Buid'
+        if (currentBuild.result == succeededBuidStatus)
+        {
+            slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
+        }
+        else
+        {
+            slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
+        }
     }
-
+    
     stage('Copy Build Artifacts')
     {
-        bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
+        if(currentBuild.result == succeededBuidStatus)
+        {
+            bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
+        }
     }
 }    
     
