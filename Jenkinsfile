@@ -64,5 +64,4 @@ node
             slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
         }
     }    
-}    
-    
+}
