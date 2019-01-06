@@ -28,12 +28,12 @@ node('master')
 
     catchError
     {
-        currentBuild.result = failedBuildStatus
         stage('Run Tests')
         {
+            currentBuild.result = failedBuildStatus
             bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
+            currentBuild.result = succeededBuildStatus
         }
-        currentBuild.result = succeededBuildStatus
     }
 
     stage('Reporting')
