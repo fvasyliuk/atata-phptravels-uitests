@@ -5,9 +5,9 @@ node
         git 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
     }
 
-    /*stage('Restore NuGet')
+    stage('Restore NuGet')
     {
         bat 'C:/Dev/nuget.exe restore src/PhpTravels.UITests.sln'
-    }*/
+    }
 }    
     
