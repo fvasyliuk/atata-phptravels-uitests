@@ -27,7 +27,7 @@ node('master')
         //slackSend message: 'Buid'
     }
 
-    stage('')
+    stage('Copy Build Artifacts')
     {
         bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
     }
