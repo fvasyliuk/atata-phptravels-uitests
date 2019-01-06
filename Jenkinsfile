@@ -8,7 +8,7 @@ def isFailed = false
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-node('master')
+node
 {
     stage('Checkout')
     {
@@ -24,6 +24,11 @@ node('master')
     {
         bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe" src/PhpTravels.UITests.sln'
     }
+
+    stage('Copy Build Artifacts')
+    {
+        bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
+    }
 }
 
 stage('Tests')
@@ -31,18 +36,17 @@ stage('Tests')
     parallel FirstTest: {
         node('master')
         {
-            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==FirstTest"'
+            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==FirstTest"'
         }
     }, SecondTest: {
         node('Slave1')
         {
-            
-            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where "cat==SecondTest"'
+            bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==SecondTest"'
         }
     }
 }
 
-node('master')
+node
 {
     stage('Reporting')
     {
@@ -54,14 +58,6 @@ node('master')
         {
             slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
         }
-    }
-    
-    stage('Copy Build Artifacts')
-    {
-        if(!isFailed)
-        {
-            bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
-        }
-    }
+    }    
 }    
     
