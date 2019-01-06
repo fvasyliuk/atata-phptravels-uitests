@@ -30,30 +30,30 @@ node('master')
     {
         stage('Run Tests')
         {
-            currentBuild.result = failedBuildStatus
+            //currentBuild.result = failedBuildStatus
             bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll'
-            currentBuild.result = succeededBuildStatus
+            //currentBuild.result = succeededBuildStatus
         }
     }
 
     stage('Reporting')
     {
-        if (currentBuild.result == succeededBuildStatus)
-        {
+       /* if (currentBuild.result == succeededBuildStatus)
+        {*/
             slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
-        }
+        /*}
         else
         {
             slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
-        }
+        }*/
     }
     
     stage('Copy Build Artifacts')
     {
-        if(currentBuild.result == succeededBuildStatus)
-        {
+       /* if(currentBuild.result == succeededBuildStatus)
+        {*/
             bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
-        }
+        //}
     }
 }    
     
