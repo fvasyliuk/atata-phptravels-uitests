@@ -55,8 +55,8 @@ node
 {
     stage('Reporting')
     {
-        archiveArtifacts 'TestResults.xml'
-        nunit testResultsPattern: 'TestResults.xml'
+        archiveArtifacts 'TestResult.xml'
+        nunit testResultsPattern: 'TestResult.xml'
 
         /*
         if (!isFailed)
