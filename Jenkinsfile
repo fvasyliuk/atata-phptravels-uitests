@@ -8,10 +8,10 @@ def isFailed = false
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-node
+node('Slave1')
 {
     input 'Yo'
-    
+
     stage('Checkout')
     {
         git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
