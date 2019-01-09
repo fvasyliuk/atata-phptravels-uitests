@@ -55,6 +55,10 @@ node
 {
     stage('Reporting')
     {
+        archiveArtifacts 'TestResults.xml'
+        nunit testResultsPattern: 'TestResults.xml'
+
+        /*
         if (!isFailed)
         {
             slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
@@ -62,6 +66,6 @@ node
         else
         {
             slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
-        }
+        }*/
     }    
 }
