@@ -20,7 +20,7 @@ namespace PhpTravels.UITests
                 Hotels.Rows[x => x.Name == name].Should.BeVisible();
         }
 
-        [Test, Category("SecondTest")]
+        [Test, Category("SecondTest"), Ignore("")]
         public void Hotel_Add_Ternopol()
         {
             LoginAsAdmin();
