@@ -19,7 +19,7 @@ namespace PhpTravels.UITests
             //        Submit().
             //    Hotels.Rows[x => x.Name == name].Should.BeVisible();
 
-            Assert.True(true);
+            Assert.True(false);
         }
 
         [Test, Category("SecondTest"), Ignore("")]
