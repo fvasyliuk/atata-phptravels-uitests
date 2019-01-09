@@ -10,8 +10,6 @@ currentBuild.description = "Branch: $branch"
 
 node('Slave1')
 {
-    input 'Yo'
-
     stage('Checkout')
     {
         git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
