@@ -31,17 +31,17 @@ node('master')
 
     stage('Restore NuGet')
     {
-        powershell '.\\build.ps1 RestorePackages'
+        bat 'C:/Dev/nuget.exe restore src/PhpTravels.UITests.sln'
     }
 
     stage('Build Solution')
     {
-        powershell '.\\build.ps1 Build'
+        bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe" src/PhpTravels.UITests.sln'
     }
 
     stage('Copy Build Artifacts')
     {
-        powershell ".\\build.ps1 CopyArtifacts -BuildArtifactsFolder $buildArtifactsFolder"
+        bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
     }
 }
 
