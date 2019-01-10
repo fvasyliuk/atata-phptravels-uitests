@@ -65,10 +65,8 @@ node('master')
         {
             dir('NUnitResults')     
             {
-                for (def i = 0; i < nunitStash.size(); i++)
-                {
-                    unstash nunitStash[i]
-                }
+                unstash "TestResult1.xml"
+                unstash "TestResult2.xml"
 
                 archiveArtifacts '*.xml'
                 nunit testResultsPattern: '*.xml'
