@@ -16,9 +16,9 @@ def RunNUnitTests(String pathToDll, String condition, String reportXmlName, def 
     {
         bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $pathToDll $condition --result=$reportXmlName"
     }
-    catch
+    catch(error)
     {
-        
+
     }
     finally
     {
