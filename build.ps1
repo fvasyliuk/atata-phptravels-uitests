@@ -11,7 +11,7 @@ param
     # Other project configuration related params
 
     [Parameter()]
-    [String] $BuildArtifactsFolder,
+    [String] $BuildArtifactsFolder
 )
 
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
