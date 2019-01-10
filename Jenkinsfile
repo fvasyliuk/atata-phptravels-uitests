@@ -25,7 +25,8 @@ node('master')
 {
     stage('Checkout')
     {
-        git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
+        // git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
+        checkout scm
     }
 
     stage('Restore NuGet')
@@ -77,7 +78,7 @@ node('master')
             nunit testResultsPattern: 'TestResult1.xml, TestResult2.xml'
         }
         
-        /*
+        
         if (!isFailed)
         {
             slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
@@ -85,6 +86,6 @@ node('master')
         else
         {
             slackSend color: "danger", message: "Tests failed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
-        }*/
+        }
     }    
 }
