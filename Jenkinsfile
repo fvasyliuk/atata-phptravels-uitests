@@ -19,7 +19,7 @@ def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
     finally
     {
         def stashName = new Random().nextInt().toString()
-        stash name: stashName, includes: $reportXmlName
+        stash name: stashName, includes: reportXmlName
         nunitStash += stashName
     }
 }
