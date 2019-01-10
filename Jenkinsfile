@@ -65,8 +65,8 @@ node('master')
         {
             dir('NUnitResults')     
             {
-                unstash "TestResult1.xml"
-                unstash "TestResult2.xml"
+                unstash "FirstTestResults"
+                unstash "SecondTestResults"
 
                 archiveArtifacts '*.xml'
                 nunit testResultsPattern: '*.xml'
