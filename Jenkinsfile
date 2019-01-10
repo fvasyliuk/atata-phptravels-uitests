@@ -68,16 +68,13 @@ node('master')
 {
     stage('Reporting')
     {
-        if(nunitStash)
+        dir('NUnitResults')     
         {
-            dir('NUnitResults')     
-            {
-                unstash "TestResult1.xml"
-                unstash "TestResult2.xml"
+            unstash "TestResult1.xml"
+            unstash "TestResult2.xml"
 
-                archiveArtifacts '*.xml'
-                nunit testResultsPattern: '*.xml'
-            }
+            archiveArtifacts '*.xml'
+            nunit testResultsPattern: '*.xml'
         }
         
         /*
