@@ -25,8 +25,8 @@ node('master')
 {
     stage('Checkout')
     {
-        // git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
-        checkout scm
+        git branch: branch, url: 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
+        // checkout scm
     }
 
     stage('Restore NuGet')
