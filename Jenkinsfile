@@ -4,13 +4,12 @@ properties([
     ])
 ])
 
-def nunitStash = []
 def isFailed = false
 def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-def RunNUnitTests(script, String pathToDll, String condition, String reportXmlName)
+def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
 {
     try
     {
@@ -18,9 +17,7 @@ def RunNUnitTests(script, String pathToDll, String condition, String reportXmlNa
     }
     finally
     {
-        def stashName = new Random().nextInt().toString()
-        stash name: stashName, includes: reportXmlName
-        script.nunitStash += stashName
+        stash name: reportXmlName, includes: reportXmlName
     }
 }
 
@@ -55,12 +52,12 @@ catchError
         parallel FirstTest: {
             node('master')
             {
-                RunNUnitTests(this, "$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
             }
         }, SecondTest: {
             node('Slave1')
             {
-                RunNUnitTests(this, "$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
             }
         }
     }
@@ -75,10 +72,8 @@ node('master')
         {
             dir('NUnitResults')     
             {
-                for (def i = 0; i < nunitStash.size(); i++)
-                {
-                    unstash nunitStash[i]
-                }
+                unstash "TestResult1.xml"
+                unstash "TestResult2.xml"
 
                 archiveArtifacts '*.xml'
                 nunit testResultsPattern: '*.xml'
