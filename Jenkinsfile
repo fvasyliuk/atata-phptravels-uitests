@@ -42,14 +42,14 @@ catchError
             node('master')
             {
                 bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==FirstTest --result=TestResult1.xml"
-                stash name: "TestResult1.xml", includes: "TestResult1.xml"
+                stash name: "FirstTestResults", includes: "TestResult1.xml"
                 nunitStash += "TestResult1.xml"
             }
         }, SecondTest: {
             node('Slave1')
             {
                 bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==SecondTest --result=TestResult2.xml"
-                stash name: "TestResult2.xml", includes: "TestResult2.xml"
+                stash name: "SecondTestResults", includes: "TestResult2.xml"
                 nunitStash += "TestResult2.xml"
             }
         }
