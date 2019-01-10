@@ -10,7 +10,7 @@ def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-node('Slave1')
+node('master')
 {
     stage('Checkout')
     {
@@ -57,7 +57,7 @@ catchError
     isFailed = false
 }
 
-node
+node('master')
 {
     stage('Reporting')
     {
