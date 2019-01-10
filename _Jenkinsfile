@@ -78,7 +78,6 @@ node('master')
             nunit testResultsPattern: 'TestResult1.xml, TestResult2.xml'
         }
         
-        
         if (!isFailed)
         {
             slackSend color: "good", message: "All tests passed.\nBranch: $branch\bBuild number: $env.BUILD_NUMBER"
