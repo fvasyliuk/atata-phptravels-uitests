@@ -10,6 +10,20 @@ def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
+def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
+{
+    try
+    {
+        bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $pathToDll $condition --result=$reportXmlName"
+    }
+    finally
+    {
+        def stashName = org.apache.commons.lang.RandomStringUtils.random(9, true, true)
+        stash name: stashName, includes: $reportXmlName
+        nunitStash += stashName
+    }
+}
+
 node('master')
 {
     stage('Checkout')
@@ -30,20 +44,6 @@ node('master')
     stage('Copy Build Artifacts')
     {
         powershell ".\\build.ps1 CopyArtifacts -BuildArtifactsFolder $buildArtifactsFolder"
-    }
-}
-
-def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
-{
-    try
-    {
-        bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $pathToDll $condition --result=$reportXmlName"
-    }
-    finally
-    {
-        def stashName = org.apache.commons.lang.RandomStringUtils.random(9, true, true)
-        stash name: stashName, includes: $reportXmlName
-        nunitStash += stashName
     }
 }
 
