@@ -10,21 +10,17 @@ def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-def RunNUnitTests(String pathToDll, String condition, String reportXmlName, def nunitStash)
+def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
 {
     try
     {
         bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $pathToDll $condition --result=$reportXmlName"
     }
-    catch(error)
-    {
-
-    }
     finally
     {
         def stashName = new Random().nextInt().toString()
         stash name: stashName, includes: reportXmlName
-        nunitStash += stashName
+        this.nunitStash += stashName
     }
 }
 
@@ -59,12 +55,12 @@ catchError
         parallel FirstTest: {
             node('master')
             {
-                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml", nunitStash)
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
             }
         }, SecondTest: {
             node('Slave1')
             {
-                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml", nunitStash)
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
             }
         }
     }
