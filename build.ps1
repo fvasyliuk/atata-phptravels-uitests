@@ -1,6 +1,7 @@
-param(
-    [Parameter(Mandatory)]
-    [String[]] $TaskList,
+param
+(
+    #[Parameter(Mandatory)]
+    [String[]] $TaskList = @("RestorePackages", "Build", "CopyArtifacts", "RunTests"),
 
     [ValidateSet('Release', 'Debug')]
     [String] $Configuration,
@@ -14,6 +15,7 @@ param(
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $NugetExe = Join-Path $PSScriptRoot "nuget.exe"
 $MSBuildExe = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
+$NUnitExe = "C:\Dev\NUnit.Console-3.9.0\nunit3-console.exe"
 $Solution = "src\PhpTravels.UITests.sln"
 
 Function DownloadNuGet()
@@ -30,7 +32,6 @@ Function RestoreNuGetPackages()
     DownloadNuGet
     Write-Output 'Restoring NuGet packages...'
     & $NugetExe restore $Solution
-
     if ($LastExitCode -ne 0) 
     {
         Throw "An error occured while restoring NuGet packages."
@@ -43,18 +44,37 @@ Function BuildSolution()
     & $MSBuildExe $Solution
     if ($LastExitCode -ne 0) 
     {
-        Throw "An error occured while restoring building a project."
+        Throw "An error occured while building a project."
     }
 }
 
 Function CopyBuildArtifacts()
 {
-    Write-Output "Copying build artifacts into '$BuildArtifactsFolder' folder..."
+    param
+    (
+        [Parameter(Mandatory)]
+        [String] $SourceFolder,
+        [Parameter(Mandatory)]
+        [String] $DestinationFolder
+    )
+
+    Write-Output "Copying build artifacts into '$DestinationFolder' folder..."
+    if (Test-Path $DestinationFolder)
+    {
+       Remove-Item $DestinationFolder -Force -Recurse
+    }
+    New-Item -ItemType directory -Path $DestinationFolder
+    Get-ChildItem -Path $SourceFolder -Recurse | Copy-Item -Destination $DestinationFolder
 }
 
 Function RunTests()
 {
     Write-Output 'Running tests...'
+    & $NUnitExe "src\PhpTravels.UITests\bin\Debug\PhpTravels.UITests.dll"
+    if ($LastExitCode -ne 0) 
+    {
+        Throw "An error occured while running tests."
+    }
 }
 
 foreach ($Task in $TaskList) {
@@ -68,7 +88,12 @@ foreach ($Task in $TaskList) {
     }
     if ($Task.ToLower() -eq 'copyartifacts')
     {
-        CopyBuildArtifacts
+        $error.clear()
+        CopyBuildArtifacts "src/PhpTravels.UITests/bin/Debug" "$BuildArtifactsFolder"
+        if($error)
+        {
+            Throw "An error occured while copying build artifacts."
+        }
     }
     if ($Task.ToLower() -eq 'runtests')
     {
