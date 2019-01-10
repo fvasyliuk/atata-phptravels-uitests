@@ -74,7 +74,8 @@ node('master')
             unstash "TestResult2.xml"
 
             archiveArtifacts '*.xml'
-            nunit testResultsPattern: '*.xml'
+            // nunit testResultsPattern: '*.xml'
+            step([$class: 'XUnitPublisher', tools: [[$class: 'NUnitJunitHudsonTestType', deleteOutputFiles: true, pattern: "*.xml"]]])
         }
         
         /*
