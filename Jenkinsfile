@@ -74,8 +74,8 @@ node('master')
             unstash "TestResult2.xml"
 
             archiveArtifacts '*.xml'
+            nunit testResultsPattern: '*.xml'
         }
-        nunit testResultsPattern: 'NUnitResults/*.xml'
         
         /*
         if (!isFailed)
