@@ -10,7 +10,7 @@ def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 def branch = params.branchName
 currentBuild.description = "Branch: $branch"
 
-def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
+def RunNUnitTests(script, String pathToDll, String condition, String reportXmlName)
 {
     try
     {
@@ -20,7 +20,7 @@ def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
     {
         def stashName = new Random().nextInt().toString()
         stash name: stashName, includes: reportXmlName
-        this.nunitStash += stashName
+        script.nunitStash += stashName
     }
 }
 
@@ -55,12 +55,12 @@ catchError
         parallel FirstTest: {
             node('master')
             {
-                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
+                RunNUnitTests(this, "$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
             }
         }, SecondTest: {
             node('Slave1')
             {
-                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
+                RunNUnitTests(this, "$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
             }
         }
     }
