@@ -33,6 +33,20 @@ node('master')
     }
 }
 
+def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
+{
+    try
+    {
+        bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $pathToDll $condition --result=$reportXmlName"
+    }
+    finally
+    {
+        def stashName = org.apache.commons.lang.RandomStringUtils.random(9, true, true)
+        stash name: stashName, includes: $reportXmlName
+        nunitStash += stashName
+    }
+}
+
 catchError
 {
     isFailed = true
@@ -41,16 +55,12 @@ catchError
         parallel FirstTest: {
             node('master')
             {
-                bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==FirstTest --result=TestResult1.xml"
-                stash name: "FirstTestResults", includes: "TestResult1.xml"
-                nunitStash += "TestResult1.xml"
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==FirstTest", "TestResult1.xml")
             }
         }, SecondTest: {
             node('Slave1')
             {
-                bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==SecondTest --result=TestResult2.xml"
-                stash name: "SecondTestResults", includes: "TestResult2.xml"
-                nunitStash += "TestResult2.xml"
+                RunNUnitTests("$buildArtifactsFolder/PhpTravels.UITests.dll", "--where cat==SecondTest", "TestResult2.xml")
             }
         }
     }
@@ -65,8 +75,10 @@ node('master')
         {
             dir('NUnitResults')     
             {
-                unstash "FirstTestResults"
-                unstash "SecondTestResults"
+                for (def i = 0; i < nunitStash.size(); i++)
+                {
+                    unstash nunitStash[i]
+                }
 
                 archiveArtifacts '*.xml'
                 nunit testResultsPattern: '*.xml'
