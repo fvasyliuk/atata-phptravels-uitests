@@ -1,7 +1,7 @@
 param
 (
-    #[Parameter(Mandatory)]
-    [String[]] $TaskList = @("RestorePackages", "Build", "CopyArtifacts", "RunTests"),
+    [Parameter()]
+    [String[]] $TaskList = @("RestorePackages", "Build", "CopyArtifacts"),
 
     [ValidateSet('Release', 'Debug')]
     [String] $Configuration,
@@ -9,13 +9,12 @@ param
     # Other project configuration related params
 
     [Parameter()]
-    [String] $BuildArtifactsFolder
+    [String] $BuildArtifactsFolder,
 )
 
 $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $NugetExe = Join-Path $PSScriptRoot "nuget.exe"
 $MSBuildExe = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\msbuild.exe"
-$NUnitExe = "C:\Dev\NUnit.Console-3.9.0\nunit3-console.exe"
 $Solution = "src\PhpTravels.UITests.sln"
 
 Function DownloadNuGet()
@@ -58,23 +57,13 @@ Function CopyBuildArtifacts()
         [String] $DestinationFolder
     )
 
-    Write-Output "Copying build artifacts into '$DestinationFolder' folder..."
+    Write-Output "Copying build artifacts from '$SourceFolder' into '$DestinationFolder' folder..."
     if (Test-Path $DestinationFolder)
     {
        Remove-Item $DestinationFolder -Force -Recurse
     }
     New-Item -ItemType directory -Path $DestinationFolder
     Get-ChildItem -Path $SourceFolder -Recurse | Copy-Item -Destination $DestinationFolder
-}
-
-Function RunTests()
-{
-    Write-Output 'Running tests...'
-    & $NUnitExe "src\PhpTravels.UITests\bin\Debug\PhpTravels.UITests.dll"
-    if ($LastExitCode -ne 0) 
-    {
-        Throw "An error occured while running tests."
-    }
 }
 
 foreach ($Task in $TaskList) {
@@ -94,9 +83,5 @@ foreach ($Task in $TaskList) {
         {
             Throw "An error occured while copying build artifacts."
         }
-    }
-    if ($Task.ToLower() -eq 'runtests')
-    {
-        RunTests
     }
 }

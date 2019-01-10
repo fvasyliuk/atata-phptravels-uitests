@@ -22,18 +22,20 @@ namespace PhpTravels.UITests
             Assert.True(true);
         }
 
-        [Test, Category("SecondTest"), Ignore("")]
+        [Test, Category("SecondTest")]
         public void Hotel_Add_Ternopol()
         {
-            LoginAsAdmin();
+            // LoginAsAdmin();
 
-            Go.To<HotelsPage>().
-                Add.ClickAndGo().
-                    HotelName.SetRandom(out string name).
-                    HotelDescription.SetRandom(out string description).
-                    Location.Set("Ternopol").
-                    Submit().
-                Hotels.Rows[x => x.Name == name].Should.BeVisible();
+            // Go.To<HotelsPage>().
+            //     Add.ClickAndGo().
+            //         HotelName.SetRandom(out string name).
+            //         HotelDescription.SetRandom(out string description).
+            //         Location.Set("Ternopol").
+            //         Submit().
+            //     Hotels.Rows[x => x.Name == name].Should.BeVisible();
+
+            Assert.True(false);
         }
     }
 }

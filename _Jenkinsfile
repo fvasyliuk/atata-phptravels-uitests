@@ -6,7 +6,6 @@ properties([
 
 def isFailed = false
 def branch = params.branchName
-def buildArtifactsFolder = "C:/BuildPackagesFromPipeline/$BUILD_ID"
 currentBuild.description = "Branch: $branch"
 
 node('Slave1')
@@ -18,17 +17,17 @@ node('Slave1')
 
     stage('Restore NuGet')
     {
-        powershell '.\\build.ps1 RestorePackages'
+        bat 'C:/Dev/nuget.exe restore src/PhpTravels.UITests.sln'
     }
 
     stage('Build Solution')
     {
-        powershell '.\\build.ps1 Build'
+        bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe" src/PhpTravels.UITests.sln'
     }
 
     stage('Copy Build Artifacts')
     {
-        powershell ".\\build.ps1 CopyArtifacts -BuildArtifactsFolder $buildArtifactsFolder"
+        bat '(robocopy src/PhpTravels.UITests/bin/Debug C:/BuildPackagesFromPipeline/%BUILD_ID% /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0'
     }
 }
 
@@ -40,12 +39,12 @@ catchError
         parallel FirstTest: {
             node('master')
             {
-               bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==FirstTest"
+                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==FirstTest"'
             }
         }, SecondTest: {
             node('Slave1')
             {
-                bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==SecondTest"
+                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" C:/BuildPackagesFromPipeline/%BUILD_ID%/PhpTravels.UITests.dll --where "cat==SecondTest"'
             }
         }
     }
