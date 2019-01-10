@@ -18,7 +18,7 @@ def RunNUnitTests(String pathToDll, String condition, String reportXmlName)
     }
     finally
     {
-        def stashName = org.apache.commons.lang.RandomStringUtils.random(9, true, true)
+        def stashName = def randomName = new Random().nextInt().ToString()
         stash name: stashName, includes: $reportXmlName
         nunitStash += stashName
     }
