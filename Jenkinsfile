@@ -1,4 +1,4 @@
-node {
+node('master') {
     stage('Checkout')
     {
         git 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
