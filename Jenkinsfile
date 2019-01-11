@@ -1,6 +1,15 @@
-def isFailed = false
+properties([
+    parameters([
+        string (name: 'branchName', defaultValue: 'master', description: 'Branch to get the tests from')
+    ])
+])
 
-node('master') {
+def isFailed = false
+def branch = params.branchName
+currentBuild.description = "Branch: $branch"
+
+node('master') 
+{
     stage('Checkout')
     {
         git 'https://github.com/PixelScrounger/atata-phptravels-uitests.git'
