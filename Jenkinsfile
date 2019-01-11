@@ -39,11 +39,11 @@ catchError
     {
         parallel FirstTest: {
             node('master') {
-                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where cat==FirstTest'
+                bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==FirstTest"
             }
         }, SecondTest: {
             node('Slave') {
-                bat '"C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe" src/PhpTravels.UITests/bin/Debug/PhpTravels.UITests.dll --where cat==SecondTest'
+                bat "C:/Dev/NUnit.Console-3.9.0/nunit3-console.exe $buildArtifactsFolder/PhpTravels.UITests.dll --where cat==SecondTest"
             }
         }
         
