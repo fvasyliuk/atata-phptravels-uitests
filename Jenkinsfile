@@ -6,7 +6,7 @@ properties([
 
 def isFailed = false
 def branch = params.branchName
-def $buildArtifactsFolder = "A:/BuildPackagesFromPipeline/$BUILD_ID"
+def buildArtifactsFolder = "A:/BuildPackagesFromPipeline/$BUILD_ID"
 currentBuild.description = "Branch: $branch "
 node('master') {
     stage("Checkout"){
@@ -20,7 +20,7 @@ node('master') {
 		bat '"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" src/PhpTravels.UITests.sln'
 	}
 	stage('Copy Artifacts'){
-		bat "(robocopy src/PhpTravels.UITests/bin/Debug $buildArtifactsFolder /MIR /XO ^& IF %ERRORLEVEL% LEQ 1 exit 0"
+		bat "(robocopy src/PhpTravels.UITests/bin/Debug $buildArtifactsFolder /MIR /XO) ^& IF %ERRORLEVEL% LEQ 1 exit 0"
 	}
 	
 }
