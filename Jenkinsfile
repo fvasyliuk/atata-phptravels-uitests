@@ -1,6 +1,6 @@
 node{
-    stage("First Stage"){
-        echo "Yo"
+    stage("Checkout"){
+        git 'https://github.com/fvasyliuk/atata-phptravels-uitests.git'
     }
     
     stage("Second Stage"){
