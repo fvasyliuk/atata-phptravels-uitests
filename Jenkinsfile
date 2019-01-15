@@ -1,4 +1,4 @@
-node{
+node('master') {
     stage("Checkout"){
         git 'https://github.com/fvasyliuk/atata-phptravels-uitests.git'
     }
